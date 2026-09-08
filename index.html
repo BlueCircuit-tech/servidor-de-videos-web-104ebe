@@ -435,6 +435,283 @@ tailwind.config = {
   </script>
 </section>
 
+    <section data-tela="busca-e-filtros" class="hidden">
+  <style>
+    .bf-campo{width:100%;border:1px solid #cbd5c0;background:#fff;border-radius:6px;padding:8px 10px;font-size:13px;color:#22301f}
+    .bf-campo:focus{outline:2px solid #6b8f4e;outline-offset:-1px}
+    .bf-lbl{display:block;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#5c6b52;margin-bottom:5px}
+    .bf-chip{display:inline-flex;align-items:center;gap:6px;border:1px solid #cbd5c0;background:#fff;border-radius:999px;padding:5px 12px;font-size:12px;font-weight:600;color:#3d4a36;cursor:pointer}
+    .bf-chip[data-on="1"]{background:#2f4527;border-color:#2f4527;color:#eef3e6}
+    .bf-td{padding:11px 14px;font-size:13px;color:#26301f;border-top:1px solid #e6ebde;vertical-align:middle}
+    .bf-th{padding:9px 14px;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#5c6b52;text-align:left;background:#f1f4ea}
+    .bf-acao{border:1px solid #cbd5c0;background:#fff;border-radius:5px;padding:4px 8px;font-size:12px;font-weight:600;color:#2f4527;cursor:pointer}
+    .bf-acao:hover{background:#eef3e6}
+  </style>
+
+  <div class="px-8 py-7 max-w-[1500px]">
+
+    <div class="flex flex-wrap items-end justify-between gap-4 mb-6">
+      <div>
+        <p class="text-[11px] font-bold tracking-[.14em] uppercase text-[#8a9a7c]">MDVR · Acervo de gravações</p>
+        <h1 class="text-2xl font-black text-[#22301f] mt-1" style="font-family:'Barlow Condensed',ui-serif,Georgia,serif;letter-spacing:.01em">Busca e Filtros Avançados</h1>
+        <p class="text-sm text-[#5c6b52] mt-1">Localize trechos descarregados automaticamente dos DVRs veiculares da frota.</p>
+      </div>
+      <div class="flex flex-wrap gap-2">
+        <button onclick="mostrarTela('painel-de-gravacoes')" class="bf-acao py-2 px-3">← Painel de Gravações</button>
+        <button onclick="busca_e_filtros_salvarFavorita()" class="py-2 px-4 rounded-md text-sm font-bold text-[#2f4527] bg-[#e2ecd2] border border-[#b8caa0]">★ Salvar esta busca</button>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 xl:grid-cols-[300px_minmax(0,1fr)] gap-6">
+
+      <aside class="bg-white border border-[#dde3d3] rounded-lg overflow-hidden self-start">
+        <div class="px-4 py-3 bg-[#2f4527] text-[#eef3e6] text-xs font-bold tracking-[.08em] uppercase">Filtros da consulta</div>
+        <div class="p-4 space-y-4">
+          <div>
+            <label class="bf-lbl">Veículo / Placa</label>
+            <select id="bfVeiculo" class="bf-campo" onchange="busca_e_filtros_aplicar()">
+              <option value="">Toda a frota (24 veículos)</option>
+              <option>RQL-7C42 · Scania R450 · Carreta 07</option>
+              <option>FTU-2B18 · VW Constellation · Baú 12</option>
+              <option>JHK-9021 · Mercedes Sprinter · Van 03</option>
+              <option>OIC-5D77 · Volvo FH540 · Carreta 15</option>
+            </select>
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="bf-lbl">De</label>
+              <input id="bfDe" type="date" value="2024-06-03" class="bf-campo" onchange="busca_e_filtros_aplicar()">
+            </div>
+            <div>
+              <label class="bf-lbl">Até</label>
+              <input id="bfAte" type="date" value="2024-06-10" class="bf-campo" onchange="busca_e_filtros_aplicar()">
+            </div>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <button class="bf-chip" onclick="busca_e_filtros_periodo(this,1)">Últimas 24h</button>
+            <button class="bf-chip" onclick="busca_e_filtros_periodo(this,7)">7 dias</button>
+            <button class="bf-chip" onclick="busca_e_filtros_periodo(this,30)">30 dias</button>
+          </div>
+
+          <div>
+            <label class="bf-lbl">Câmera</label>
+            <div class="flex flex-wrap gap-2">
+              <button class="bf-chip" data-cam="Frontal" data-on="1" onclick="busca_e_filtros_toggle(this)">📹 Frontal</button>
+              <button class="bf-chip" data-cam="Cabine" data-on="1" onclick="busca_e_filtros_toggle(this)">🪑 Cabine</button>
+              <button class="bf-chip" data-cam="Traseira" data-on="1" onclick="busca_e_filtros_toggle(this)">🔙 Traseira</button>
+            </div>
+          </div>
+
+          <div>
+            <label class="bf-lbl">Tipo de evento</label>
+            <select id="bfEvento" class="bf-campo" onchange="busca_e_filtros_aplicar()">
+              <option value="">Todos os eventos</option>
+              <option>Frenagem brusca</option>
+              <option>Fadiga do motorista</option>
+              <option>Abertura de porta</option>
+              <option>Botão de pânico</option>
+              <option>Gravação contínua</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="bf-lbl">Status do arquivo</label>
+            <select id="bfStatus" class="bf-campo" onchange="busca_e_filtros_aplicar()">
+              <option value="">Qualquer status</option>
+              <option>Descarregado</option>
+              <option>Baixando</option>
+              <option>Pendente no DVR</option>
+              <option>Arquivado (nuvem fria)</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="bf-lbl">Motorista</label>
+            <input id="bfMotorista" class="bf-campo" placeholder="Ex.: Everaldo Bastos" oninput="busca_e_filtros_aplicar()">
+          </div>
+
+          <div class="flex gap-2 pt-1">
+            <button onclick="busca_e_filtros_aplicar()" class="flex-1 py-2 rounded-md text-sm font-bold text-white bg-[#4f7a33] hover:bg-[#3f6528]">Aplicar filtros</button>
+            <button onclick="busca_e_filtros_limpar()" class="py-2 px-3 rounded-md text-sm font-bold text-[#5c6b52] border border-[#cbd5c0] bg-white">Limpar</button>
+          </div>
+        </div>
+        <div class="border-t border-[#e6ebde] p-4">
+          <p class="bf-lbl">Buscas favoritas</p>
+          <div id="bfFavoritas" class="space-y-1.5">
+            <button onclick="busca_e_filtros_carregarFav('Pânico · Carreta 07','RQL-7C42 · Scania R450 · Carreta 07','Botão de pânico')" class="w-full text-left text-[13px] px-2 py-1.5 rounded hover:bg-[#eef3e6] text-[#2f4527] font-semibold">★ Pânico · Carreta 07</button>
+            <button onclick="busca_e_filtros_carregarFav('Fadiga rota Curitiba','','Fadiga do motorista')" class="w-full text-left text-[13px] px-2 py-1.5 rounded hover:bg-[#eef3e6] text-[#2f4527] font-semibold">★ Fadiga rota Curitiba</button>
+          </div>
+        </div>
+      </aside>
+
+      <div class="min-w-0">
+        <div class="bg-white border border-[#dde3d3] rounded-lg p-4 mb-4">
+          <div class="flex flex-wrap gap-3 items-center">
+            <input id="bfTexto" class="bf-campo flex-1 min-w-[240px]" placeholder="Buscar por placa, motorista, nº do arquivo ou rota..." oninput="busca_e_filtros_aplicar()">
+            <select id="bfOrdem" class="bf-campo w-auto" onchange="busca_e_filtros_aplicar()">
+              <option value="data">Mais recentes primeiro</option>
+              <option value="tam">Maior tamanho</option>
+              <option value="dur">Maior duração</option>
+            </select>
+          </div>
+          <div id="bfResumo" class="mt-3 flex flex-wrap gap-2 text-xs text-[#5c6b52]"></div>
+        </div>
+
+        <div class="bg-white border border-[#dde3d3] rounded-lg overflow-hidden">
+          <div class="flex flex-wrap items-center justify-between gap-3 px-4 py-3 border-b border-[#e6ebde] bg-[#f7f9f3]">
+            <p class="text-sm font-bold text-[#22301f]"><span id="bfQtd">0</span> gravações encontradas <span id="bfVol" class="font-normal text-[#5c6b52]"></span></p>
+            <div class="flex flex-wrap gap-2">
+              <button onclick="busca_e_filtros_baixarLote()" class="bf-acao py-1.5">⬇ Baixar selecionadas</button>
+              <button onclick="mostrarTela('central-de-alertas')" class="bf-acao py-1.5">🔔 Notificar equipe</button>
+            </div>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full min-w-[1000px] border-collapse">
+              <thead>
+                <tr>
+                  <th class="bf-th w-10"><input type="checkbox" onclick="busca_e_filtros_todos(this)"></th>
+                  <th class="bf-th">Arquivo / Data</th>
+                  <th class="bf-th">Veículo</th>
+                  <th class="bf-th">Câmera</th>
+                  <th class="bf-th">Evento</th>
+                  <th class="bf-th">Duração</th>
+                  <th class="bf-th">Tamanho</th>
+                  <th class="bf-th">Status</th>
+                  <th class="bf-th text-right">Ações</th>
+                </tr>
+              </thead>
+              <tbody id="bfCorpo"></tbody>
+            </table>
+          </div>
+          <div id="bfVazio" class="hidden px-6 py-12 text-center">
+            <p class="text-sm font-bold text-[#22301f]">Nenhuma gravação com esses filtros.</p>
+            <p class="text-xs text-[#5c6b52] mt-1">Amplie o período ou libere as câmeras desmarcadas.</p>
+            <button onclick="busca_e_filtros_limpar()" class="mt-4 bf-acao py-2 px-4">Limpar filtros</button>
+          </div>
+        </div>
+
+        <div id="bfDetalhe" class="hidden mt-4 bg-[#22301f] text-[#e6ecdc] rounded-lg p-5">
+          <div class="flex flex-wrap items-start justify-between gap-4">
+            <div>
+              <p class="text-[11px] tracking-[.12em] uppercase text-[#9db388]">Gravação selecionada</p>
+              <h3 id="bfDetTitulo" class="text-lg font-bold mt-1"></h3>
+              <p id="bfDetInfo" class="text-sm text-[#b8c8a8] mt-1"></p>
+            </div>
+            <div class="flex flex-wrap gap-2">
+              <button onclick="mostrarTela('player-do-video')" class="py-2 px-4 rounded-md text-sm font-bold bg-[#7fae4b] text-[#182213]">▶ Assistir agora</button>
+              <button onclick="mostrarTela('fotos-e-documentos')" class="py-2 px-4 rounded-md text-sm font-bold border border-[#5d7a49] text-[#dbe6cc]">📎 Anexar documento</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const busca_e_filtros_dados = [
+      {id:'MDVR-20240610-0417', data:'10/06/2024 04:17', placa:'RQL-7C42', veic:'Scania R450 · Carreta 07', mot:'Everaldo Bastos', cam:'Cabine', ev:'Fadiga do motorista', dur:'02:14', durS:134, tam:'186 MB', tamN:186, st:'Descarregado', rota:'Curitiba → Joinville'},
+      {id:'MDVR-20240609-2233', data:'09/06/2024 22:33', placa:'FTU-2B18', veic:'VW Constellation · Baú 12', mot:'Marlene Siqueira', cam:'Traseira', ev:'Abertura de porta', dur:'05:48', durS:348, tam:'412 MB', tamN:412, st:'Descarregado', rota:'CD Cajamar → Osasco'},
+      {id:'MDVR-20240608-1502', data:'08/06/2024 15:02', placa:'RQL-7C42', veic:'Scania R450 · Carreta 07', mot:'Everaldo Bastos', cam:'Frontal', ev:'Frenagem brusca', dur:'01:36', durS:96, tam:'121 MB', tamN:121, st:'Baixando', rota:'BR-116 km 214'},
+      {id:'MDVR-20240607-0911', data:'07/06/2024 09:11', placa:'JHK-9021', veic:'Mercedes Sprinter · Van 03', mot:'Cleiton Amaral', cam:'Frontal', ev:'Botão de pânico', dur:'08:05', durS:485, tam:'640 MB', tamN:640, st:'Descarregado', rota:'Santo André → Diadema'},
+      {id:'MDVR-20240605-1740', data:'05/06/2024 17:40', placa:'OIC-5D77', veic:'Volvo FH540 · Carreta 15', mot:'Rosana Peçanha', cam:'Cabine', ev:'Gravação contínua', dur:'30:00', durS:1800, tam:'1,8 GB', tamN:1843, st:'Arquivado (nuvem fria)', rota:'Uberlândia → Goiânia'},
+      {id:'MDVR-20240604-0628', data:'04/06/2024 06:28', placa:'FTU-2B18', veic:'VW Constellation · Baú 12', mot:'Marlene Siqueira', cam:'Traseira', ev:'Frenagem brusca', dur:'03:12', durS:192, tam:'248 MB', tamN:248, st:'Pendente no DVR', rota:'Rod. Anhanguera km 32'}
+    ];
+    const busca_e_filtros_cor = {'Descarregado':'bg-[#dff0cd] text-[#375c1e]','Baixando':'bg-[#dbe7f7] text-[#1f4470]','Pendente no DVR':'bg-[#fdeccd] text-[#7a4c11]','Arquivado (nuvem fria)':'bg-[#e8e8ea] text-[#4a4a52]'};
+
+    function busca_e_filtros_toggle(b){ b.dataset.on = b.dataset.on === '1' ? '0' : '1'; busca_e_filtros_aplicar(); }
+    function busca_e_filtros_periodo(b,d){
+      document.querySelectorAll('[onclick^="busca_e_filtros_periodo"]').forEach(x=>x.dataset.on='0');
+      b.dataset.on='1';
+      const fim=new Date(2024,5,10), ini=new Date(2024,5,10); ini.setDate(ini.getDate()-d);
+      const f=x=>x.toISOString().slice(0,10);
+      document.getElementById('bfDe').value=f(ini); document.getElementById('bfAte').value=f(fim);
+      busca_e_filtros_aplicar();
+    }
+    function busca_e_filtros_limpar(){
+      ['bfVeiculo','bfEvento','bfStatus'].forEach(i=>document.getElementById(i).value='');
+      document.getElementById('bfMotorista').value=''; document.getElementById('bfTexto').value='';
+      document.getElementById('bfDe').value='2024-06-01'; document.getElementById('bfAte').value='2024-06-10';
+      document.getElementById('bfOrdem').value='data';
+      document.querySelectorAll('[data-cam]').forEach(c=>c.dataset.on='1');
+      document.querySelectorAll('[onclick^="busca_e_filtros_periodo"]').forEach(x=>x.dataset.on='0');
+      document.getElementById('bfDetalhe').classList.add('hidden');
+      busca_e_filtros_aplicar();
+    }
+    function busca_e_filtros_carregarFav(nome,veic,ev){
+      document.getElementById('bfVeiculo').value=veic;
+      document.getElementById('bfEvento').value=ev;
+      document.getElementById('bfTexto').value='';
+      busca_e_filtros_aplicar(nome);
+    }
+    function busca_e_filtros_salvarFavorita(){
+      const nome = (document.getElementById('bfEvento').value || 'Busca livre') + ' · ' + (document.getElementById('bfVeiculo').value.split(' ·')[0] || 'frota');
+      const b=document.createElement('button');
+      b.className='w-full text-left text-[13px] px-2 py-1.5 rounded bg-[#eef3e6] text-[#2f4527] font-semibold';
+      b.textContent='★ '+nome;
+      b.onclick=()=>busca_e_filtros_aplicar(nome);
+      document.getElementById('bfFavoritas').appendChild(b);
+      busca_e_filtros_aplicar(nome+' — salva nos favoritos');
+    }
+    function busca_e_filtros_todos(c){ document.querySelectorAll('#bfCorpo input[type=checkbox]').forEach(x=>x.checked=c.checked); }
+    function busca_e_filtros_baixarLote(){
+      const n=document.querySelectorAll('#bfCorpo input[type=checkbox]:checked').length;
+      const r=document.getElementById('bfResumo');
+      r.insertAdjacentHTML('afterbegin','<span class="px-2 py-1 rounded bg-[#dff0cd] text-[#375c1e] font-bold">'+(n||0)+' arquivo(s) na fila de download</span>');
+    }
+    function busca_e_filtros_ver(i){
+      const g=busca_e_filtros_dados[i];
+      document.getElementById('bfDetalhe').classList.remove('hidden');
+      document.getElementById('bfDetTitulo').textContent=g.id+' · câmera '+g.cam;
+      document.getElementById('bfDetInfo').textContent=g.veic+' ('+g.placa+') · '+g.mot+' · '+g.data+' · '+g.dur+' · '+g.tam+' · '+g.rota+' · '+g.st;
+      document.querySelectorAll('#bfCorpo tr').forEach(t=>t.classList.remove('bg-[#f3f7ec]'));
+      document.querySelector('#bfCorpo tr[data-i="'+i+'"]').classList.add('bg-[#f3f7ec]');
+    }
+    function busca_e_filtros_aplicar(msg){
+      const cams=[...document.querySelectorAll('[data-cam]')].filter(c=>c.dataset.on==='1').map(c=>c.dataset.cam);
+      const v=document.getElementById('bfVeiculo').value, ev=document.getElementById('bfEvento').value,
+            st=document.getElementById('bfStatus').value, mo=document.getElementById('bfMotorista').value.toLowerCase(),
+            tx=document.getElementById('bfTexto').value.toLowerCase(), ord=document.getElementById('bfOrdem').value;
+      let lista=busca_e_filtros_dados.filter(g=>
+        cams.includes(g.cam) &&
+        (!v || v.startsWith(g.placa)) && (!ev || ev===g.ev) && (!st || st===g.st) &&
+        (!mo || g.mot.toLowerCase().includes(mo)) &&
+        (!tx || (g.id+g.placa+g.mot+g.rota).toLowerCase().includes(tx))
+      );
+      if(ord==='tam') lista.sort((a,b)=>b.tamN-a.tamN);
+      if(ord==='dur') lista.sort((a,b)=>b.durS-a.durS);
+      const corpo=document.getElementById('bfCorpo');
+      corpo.innerHTML=lista.map(g=>{
+        const i=busca_e_filtros_dados.indexOf(g);
+        return '<tr data-i="'+i+'" class="hover:bg-[#f7f9f3] cursor-pointer" onclick="busca_e_filtros_ver('+i+')">'+
+        '<td class="bf-td" onclick="event.stopPropagation()"><input type="checkbox"></td>'+
+        '<td class="bf-td"><span class="font-bold">'+g.id+'</span><br><span class="text-xs text-[#5c6b52]">'+g.data+' · '+g.rota+'</span></td>'+
+        '<td class="bf-td"><span class="font-semibold">'+g.placa+'</span><br><span class="text-xs text-[#5c6b52]">'+g.veic+'</span></td>'+
+        '<td class="bf-td">'+g.cam+'</td><td class="bf-td">'+g.ev+'</td><td class="bf-td font-semibold">'+g.dur+'</td><td class="bf-td">'+g.tam+'</td>'+
+        '<td class="bf-td"><span class="px-2 py-1 rounded text-xs font-bold '+busca_e_filtros_cor[g.st]+'">'+g.st+'</span></td>'+
+        '<td class="bf-td text-right whitespace-nowrap" onclick="event.stopPropagation()">'+
+        '<button class="bf-acao" onclick="mostrarTela(\'player-do-video\')">▶ Assistir</button> '+
+        '<button class="bf-acao" onclick="busca_e_filtros_baixar(this)">⬇ Baixar</button> '+
+        '<button class="bf-acao" onclick="mostrarTela(\'fotos-e-documentos\')">📎</button></td></tr>';
+      }).join('');
+      document.getElementById('bfQtd').textContent=lista.length;
+      const vol=lista.reduce((s,g)=>s+g.tamN,0);
+      document.getElementById('bfVol').textContent='· volume total '+(vol/1024).toFixed(2)+' GB';
+      document.getElementById('bfVazio').classList.toggle('hidden',lista.length>0);
+      const tags=[];
+      if(msg) tags.push('<span class="px-2 py-1 rounded bg-[#e2ecd2] text-[#2f4527] font-bold">'+msg+'</span>');
+      tags.push('<span class="px-2 py-1 rounded bg-[#f1f4ea]">Período: '+document.getElementById('bfDe').value.split('-').reverse().join('/')+' a '+document.getElementById('bfAte').value.split('-').reverse().join('/')+'</span>');
+      tags.push('<span class="px-2 py-1 rounded bg-[#f1f4ea]">Câmeras: '+(cams.join(', ')||'nenhuma')+'</span>');
+      if(v) tags.push('<span class="px-2 py-1 rounded bg-[#f1f4ea]">'+v.split(' ·')[0]+'</span>');
+      if(ev) tags.push('<span class="px-2 py-1 rounded bg-[#f1f4ea]">'+ev+'</span>');
+      if(st) tags.push('<span class="px-2 py-1 rounded bg-[#f1f4ea]">'+st+'</span>');
+      if(mo) tags.push('<span class="px-2 py-1 rounded bg-[#f1f4ea]">Motorista: '+document.getElementById('bfMotorista').value+'</span>');
+      document.getElementById('bfResumo').innerHTML=tags.join('');
+    }
+    function busca_e_filtros_baixar(b){ b.textContent='✓ Na fila'; b.style.background='#dff0cd'; }
+    busca_e_filtros_aplicar();
+  </script>
+</section>
+
     <!-- TELAS -->
     </main>
 
