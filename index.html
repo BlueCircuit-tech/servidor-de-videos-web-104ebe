@@ -170,7 +170,272 @@ tailwind.config = {
     </header>
 
     <main class="flex-1 p-6 min-w-0">
-<!-- TELAS -->
+<section data-tela="painel-de-gravacoes" class="hidden">
+  <style>
+    .pg-card{background:#0f172a;border:1px solid #1e293b}
+    .pg-thumb{background:
+      linear-gradient(135deg,#1e293b 0%,#0b1220 60%),
+      repeating-linear-gradient(0deg,rgba(148,163,184,.08) 0 1px,transparent 1px 22px)}
+    .pg-chip{border:1px solid #334155;color:#cbd5e1}
+    .pg-chip-on{background:#f59e0b;border-color:#f59e0b;color:#1c1917;font-weight:600}
+    .pg-veic{border-left:3px solid transparent}
+    .pg-veic-on{border-left-color:#f59e0b;background:#111c2e}
+  </style>
+
+  <div class="px-6 py-5 text-slate-200" style="background:#070d18">
+
+    <div class="flex flex-wrap items-center gap-3 mb-5 pg-card rounded-lg px-4 py-3">
+      <div class="flex items-center gap-2 grow min-w-[240px]">
+        <span class="text-slate-500">🔎</span>
+        <input id="pg-busca" oninput="painel_de_gravacoes_busca()" placeholder="Buscar por placa, motorista ou câmera…"
+          class="w-full bg-transparent outline-none text-sm placeholder-slate-500 text-slate-100">
+      </div>
+      <div class="flex items-center rounded-md overflow-hidden text-xs" style="border:1px solid #334155">
+        <button onclick="painel_de_gravacoes_perfil('cliente')" id="pg-p-cliente" class="px-3 py-1.5">Cliente</button>
+        <button onclick="painel_de_gravacoes_perfil('equipe')" id="pg-p-equipe" class="px-3 py-1.5">Equipe técnica</button>
+      </div>
+      <button onclick="mostrarTela('central-de-alertas')" class="relative px-3 py-1.5 rounded-md text-sm" style="border:1px solid #334155">
+        🔔 Alertas
+        <span class="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] font-bold rounded-full px-1.5 py-0.5">4</span>
+      </button>
+      <button onclick="mostrarTela('busca-e-filtros')" class="px-3 py-1.5 rounded-md text-sm" style="border:1px solid #334155">⛭ Filtros avançados</button>
+      <button onclick="painel_de_gravacoes_atualizarFila()" class="px-3 py-1.5 rounded-md text-sm bg-amber-500 text-slate-900 font-semibold">⟳ Atualizar fila</button>
+      <button onclick="painel_de_gravacoes_exportar()" class="px-3 py-1.5 rounded-md text-sm" style="border:1px solid #334155">⤓ Exportar</button>
+    </div>
+
+    <div class="grid gap-5" style="grid-template-columns:280px minmax(0,1fr)">
+
+      <aside class="pg-card rounded-lg overflow-hidden self-start">
+        <div class="px-4 py-3 border-b" style="border-color:#1e293b">
+          <p class="text-xs uppercase tracking-wider text-slate-500">Frota — Transportes Serra Azul</p>
+          <p class="text-sm text-slate-300 mt-1">6 veículos • 5 MDVR online</p>
+        </div>
+        <button onclick="painel_de_gravacoes_veiculo(this,'todas')" class="pg-veic pg-veic-on w-full text-left px-4 py-3 text-sm hover:bg-slate-800/40">
+          <span class="font-semibold">Toda a frota</span>
+          <span class="block text-xs text-slate-500">6 gravações recentes</span>
+        </button>
+        <button onclick="painel_de_gravacoes_veiculo(this,'RTA4F21')" class="pg-veic w-full text-left px-4 py-3 text-sm hover:bg-slate-800/40">
+          <span class="font-semibold">RTA-4F21</span> <span class="text-emerald-400 text-[10px]">● online</span>
+          <span class="block text-xs text-slate-500">Scania R450 • Everaldo Nunes</span>
+        </button>
+        <button onclick="painel_de_gravacoes_veiculo(this,'QWX7B45')" class="pg-veic w-full text-left px-4 py-3 text-sm hover:bg-slate-800/40">
+          <span class="font-semibold">QWX-7B45</span> <span class="text-emerald-400 text-[10px]">● online</span>
+          <span class="block text-xs text-slate-500">Volvo FH 460 • Marcos Ferrari</span>
+        </button>
+        <button onclick="painel_de_gravacoes_veiculo(this,'PDG1A09')" class="pg-veic w-full text-left px-4 py-3 text-sm hover:bg-slate-800/40">
+          <span class="font-semibold">PDG-1A09</span> <span class="text-amber-400 text-[10px]">● baixando</span>
+          <span class="block text-xs text-slate-500">Mercedes Actros • Cleiton Barros</span>
+        </button>
+        <button onclick="painel_de_gravacoes_veiculo(this,'LKM8H72')" class="pg-veic w-full text-left px-4 py-3 text-sm hover:bg-slate-800/40">
+          <span class="font-semibold">LKM-8H72</span> <span class="text-slate-500 text-[10px]">● offline 2h</span>
+          <span class="block text-xs text-slate-500">Iveco Tector • Sandra Rocha</span>
+        </button>
+        <div class="px-4 py-3 border-t" style="border-color:#1e293b">
+          <button onclick="mostrarTela('fotos-e-documentos')" class="text-xs text-amber-400 hover:underline">📄 Fotos e documentos da frota →</button>
+        </div>
+      </aside>
+
+      <div>
+        <div class="grid gap-4 mb-5" style="grid-template-columns:repeat(auto-fit,minmax(190px,1fr))">
+          <div class="pg-card rounded-lg p-4">
+            <p class="text-xs text-slate-500 uppercase tracking-wider">Descarregadas hoje</p>
+            <p class="text-2xl font-bold text-slate-100 mt-1"><span id="pg-kpi-ok">18</span> <span class="text-sm font-normal text-slate-500">clipes</span></p>
+          </div>
+          <div class="pg-card rounded-lg p-4">
+            <p class="text-xs text-slate-500 uppercase tracking-wider">Na fila do MDVR</p>
+            <p class="text-2xl font-bold text-amber-400 mt-1"><span id="pg-kpi-fila">5</span> <span class="text-sm font-normal text-slate-500">arquivos</span></p>
+          </div>
+          <div class="pg-card rounded-lg p-4">
+            <p class="text-xs text-slate-500 uppercase tracking-wider">Falhas de transferência</p>
+            <p class="text-2xl font-bold text-red-400 mt-1">1</p>
+          </div>
+          <div class="pg-card rounded-lg p-4">
+            <p class="text-xs text-slate-500 uppercase tracking-wider">Armazenamento</p>
+            <p class="text-2xl font-bold text-slate-100 mt-1">412 <span class="text-sm font-normal text-slate-500">GB / 1 TB</span></p>
+            <div class="h-1.5 bg-slate-800 rounded mt-2"><div class="h-1.5 bg-amber-500 rounded" style="width:41%"></div></div>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2 mb-4">
+          <h2 id="pg-titulo" class="text-lg font-semibold text-slate-100 mr-2">Gravações recentes — toda a frota</h2>
+          <button onclick="painel_de_gravacoes_status(this,'todos')" class="pg-chip pg-chip-on text-xs rounded-full px-3 py-1">Todos</button>
+          <button onclick="painel_de_gravacoes_status(this,'concluido')" class="pg-chip text-xs rounded-full px-3 py-1">Concluídos</button>
+          <button onclick="painel_de_gravacoes_status(this,'baixando')" class="pg-chip text-xs rounded-full px-3 py-1">Baixando</button>
+          <button onclick="painel_de_gravacoes_status(this,'fila')" class="pg-chip text-xs rounded-full px-3 py-1">Na fila</button>
+          <button onclick="painel_de_gravacoes_status(this,'falha')" class="pg-chip text-xs rounded-full px-3 py-1">Falha</button>
+        </div>
+
+        <div id="pg-grade" class="grid gap-4" style="grid-template-columns:repeat(auto-fill,minmax(280px,1fr))">
+
+          <article data-placa="RTA4F21" data-status="concluido" data-busca="rta-4f21 everaldo nunes cam1 frontal frenagem"
+            class="pg-card rounded-lg overflow-hidden hover:border-amber-500/60 transition cursor-pointer" onclick="mostrarTela('player-do-video')">
+            <div class="pg-thumb h-36 relative flex items-end p-2">
+              <span class="absolute top-2 left-2 text-[10px] bg-black/70 px-1.5 py-0.5 rounded">CAM 1 · Frontal</span>
+              <span class="absolute top-2 right-2 text-[10px] bg-emerald-500/90 text-slate-900 font-semibold px-1.5 py-0.5 rounded">Concluído</span>
+              <span class="text-[10px] bg-black/70 px-1.5 py-0.5 rounded">00:02:14 · 84 MB</span>
+              <span class="absolute inset-0 flex items-center justify-center text-3xl text-white/70">▶</span>
+            </div>
+            <div class="p-3">
+              <p class="font-semibold text-slate-100">RTA-4F21 <span class="text-xs text-slate-500 font-normal">Scania R450</span></p>
+              <p class="text-xs text-slate-400 mt-1">12/06/2024 · 07:42 — BR-116, km 218 (Registro/SP)</p>
+              <p class="text-xs text-amber-400 mt-1">Evento: frenagem brusca</p>
+            </div>
+          </article>
+
+          <article data-placa="QWX7B45" data-status="concluido" data-busca="qwx-7b45 marcos ferrari cam2 cabine sonolencia"
+            class="pg-card rounded-lg overflow-hidden hover:border-amber-500/60 transition cursor-pointer" onclick="mostrarTela('player-do-video')">
+            <div class="pg-thumb h-36 relative flex items-end p-2">
+              <span class="absolute top-2 left-2 text-[10px] bg-black/70 px-1.5 py-0.5 rounded">CAM 2 · Cabine</span>
+              <span class="absolute top-2 right-2 text-[10px] bg-emerald-500/90 text-slate-900 font-semibold px-1.5 py-0.5 rounded">Concluído</span>
+              <span class="text-[10px] bg-black/70 px-1.5 py-0.5 rounded">00:01:05 · 41 MB</span>
+              <span class="absolute inset-0 flex items-center justify-center text-3xl text-white/70">▶</span>
+            </div>
+            <div class="p-3">
+              <p class="font-semibold text-slate-100">QWX-7B45 <span class="text-xs text-slate-500 font-normal">Volvo FH 460</span></p>
+              <p class="text-xs text-slate-400 mt-1">12/06/2024 · 06:15 — Rod. Anhanguera, km 92</p>
+              <p class="text-xs text-red-400 mt-1">Evento: sonolência (DSM)</p>
+            </div>
+          </article>
+
+          <article data-placa="PDG1A09" data-status="baixando" data-busca="pdg-1a09 cleiton barros cam3 traseira manobra"
+            class="pg-card rounded-lg overflow-hidden hover:border-amber-500/60 transition cursor-pointer" onclick="mostrarTela('player-do-video')">
+            <div class="pg-thumb h-36 relative flex items-end p-2">
+              <span class="absolute top-2 left-2 text-[10px] bg-black/70 px-1.5 py-0.5 rounded">CAM 3 · Traseira</span>
+              <span class="absolute top-2 right-2 text-[10px] bg-amber-500 text-slate-900 font-semibold px-1.5 py-0.5 rounded">Baixando 63%</span>
+              <span class="text-[10px] bg-black/70 px-1.5 py-0.5 rounded">00:03:40 · 128 MB</span>
+            </div>
+            <div class="p-3">
+              <p class="font-semibold text-slate-100">PDG-1A09 <span class="text-xs text-slate-500 font-normal">Mercedes Actros</span></p>
+              <p class="text-xs text-slate-400 mt-1">12/06/2024 · 05:58 — CD Cajamar (pátio)</p>
+              <div class="h-1.5 bg-slate-800 rounded mt-2"><div class="h-1.5 bg-amber-500 rounded" style="width:63%"></div></div>
+            </div>
+          </article>
+
+          <article data-placa="LKM8H72" data-status="fila" data-busca="lkm-8h72 sandra rocha cam4 bau porta aberta"
+            class="pg-card rounded-lg overflow-hidden hover:border-amber-500/60 transition cursor-pointer" onclick="mostrarTela('player-do-video')">
+            <div class="pg-thumb h-36 relative flex items-end p-2">
+              <span class="absolute top-2 left-2 text-[10px] bg-black/70 px-1.5 py-0.5 rounded">CAM 4 · Baú</span>
+              <span class="absolute top-2 right-2 text-[10px] bg-slate-600 text-slate-100 font-semibold px-1.5 py-0.5 rounded">Na fila</span>
+              <span class="text-[10px] bg-black/70 px-1.5 py-0.5 rounded">00:05:12 · 190 MB</span>
+            </div>
+            <div class="p-3">
+              <p class="font-semibold text-slate-100">LKM-8H72 <span class="text-xs text-slate-500 font-normal">Iveco Tector</span></p>
+              <p class="text-xs text-slate-400 mt-1">11/06/2024 · 23:34 — Av. dos Bandeirantes, 4.200</p>
+              <p class="text-xs text-slate-500 mt-1">Aguarda Wi-Fi do pátio · MDVR offline</p>
+            </div>
+          </article>
+
+          <article data-placa="RTA4F21" data-status="falha" data-busca="rta-4f21 everaldo nunes cam1 frontal falha"
+            class="pg-card rounded-lg overflow-hidden hover:border-amber-500/60 transition cursor-pointer" onclick="mostrarTela('player-do-video')">
+            <div class="pg-thumb h-36 relative flex items-end p-2">
+              <span class="absolute top-2 left-2 text-[10px] bg-black/70 px-1.5 py-0.5 rounded">CAM 1 · Frontal</span>
+              <span class="absolute top-2 right-2 text-[10px] bg-red-500 text-white font-semibold px-1.5 py-0.5 rounded">Falha 4G</span>
+              <span class="text-[10px] bg-black/70 px-1.5 py-0.5 rounded">parcial · 22 MB de 96 MB</span>
+            </div>
+            <div class="p-3">
+              <p class="font-semibold text-slate-100">RTA-4F21 <span class="text-xs text-slate-500 font-normal">Scania R450</span></p>
+              <p class="text-xs text-slate-400 mt-1">11/06/2024 · 19:07 — Serra do Cafezal, km 30</p>
+              <button onclick="event.stopPropagation();painel_de_gravacoes_reenfileirar(this)" class="mt-2 text-xs px-2 py-1 rounded" style="border:1px solid #334155">↻ Reenfileirar</button>
+            </div>
+          </article>
+
+          <article data-placa="QWX7B45" data-status="concluido" data-busca="qwx-7b45 marcos ferrari cam1 frontal parada"
+            class="pg-card rounded-lg overflow-hidden hover:border-amber-500/60 transition cursor-pointer" onclick="mostrarTela('player-do-video')">
+            <div class="pg-thumb h-36 relative flex items-end p-2">
+              <span class="absolute top-2 left-2 text-[10px] bg-black/70 px-1.5 py-0.5 rounded">CAM 1 · Frontal</span>
+              <span class="absolute top-2 right-2 text-[10px] bg-emerald-500/90 text-slate-900 font-semibold px-1.5 py-0.5 rounded">Concluído</span>
+              <span class="text-[10px] bg-black/70 px-1.5 py-0.5 rounded">00:04:02 · 152 MB</span>
+              <span class="absolute inset-0 flex items-center justify-center text-3xl text-white/70">▶</span>
+            </div>
+            <div class="p-3">
+              <p class="font-semibold text-slate-100">QWX-7B45 <span class="text-xs text-slate-500 font-normal">Volvo FH 460</span></p>
+              <p class="text-xs text-slate-400 mt-1">11/06/2024 · 14:20 — Posto Graal, Jundiaí</p>
+              <p class="text-xs text-slate-500 mt-1">Descarregamento agendado (rotina 14h)</p>
+            </div>
+          </article>
+
+        </div>
+
+        <p id="pg-vazio" class="hidden text-sm text-slate-500 mt-6">Nenhuma gravação encontrada com esses critérios.
+          <button onclick="mostrarTela('busca-e-filtros')" class="text-amber-400 hover:underline">Refinar na busca avançada →</button>
+        </p>
+
+        <div id="pg-equipe" class="hidden mt-5 pg-card rounded-lg p-4">
+          <p class="text-sm text-slate-300">Perfil <b>Equipe técnica</b> ativo: você também controla dispositivos, usuários e regras de notificação.</p>
+          <div class="flex flex-wrap gap-2 mt-3">
+            <button onclick="mostrarTela('painel-administrativo')" class="px-3 py-1.5 rounded-md text-sm bg-amber-500 text-slate-900 font-semibold">Abrir painel administrativo</button>
+            <button onclick="mostrarTela('central-de-alertas')" class="px-3 py-1.5 rounded-md text-sm" style="border:1px solid #334155">Regras de WhatsApp / push</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="pg-toast" class="hidden fixed bottom-6 right-6 bg-amber-500 text-slate-900 text-sm font-semibold px-4 py-3 rounded-lg shadow-lg z-50"></div>
+  </div>
+
+  <script>
+    var pg_estado = {placa:'todas', status:'todos', fila:5, ok:18};
+    function painel_de_gravacoes_toast(t){
+      var e=document.getElementById('pg-toast');
+      e.textContent=t; e.classList.remove('hidden');
+      clearTimeout(window.pg_tm); window.pg_tm=setTimeout(function(){e.classList.add('hidden');},2600);
+    }
+    function painel_de_gravacoes_aplicar(){
+      var q=(document.getElementById('pg-busca').value||'').toLowerCase().trim();
+      var vis=0;
+      document.querySelectorAll('#pg-grade > article').forEach(function(c){
+        var ok = (pg_estado.placa==='todas'||c.dataset.placa===pg_estado.placa)
+              && (pg_estado.status==='todos'||c.dataset.status===pg_estado.status)
+              && (q===''||c.dataset.busca.indexOf(q)>-1);
+        c.classList.toggle('hidden',!ok); if(ok) vis++;
+      });
+      document.getElementById('pg-vazio').classList.toggle('hidden', vis>0);
+    }
+    function painel_de_gravacoes_busca(){ painel_de_gravacoes_aplicar(); }
+    function painel_de_gravacoes_veiculo(el,placa){
+      document.querySelectorAll('.pg-veic').forEach(function(b){b.classList.remove('pg-veic-on');});
+      el.classList.add('pg-veic-on');
+      pg_estado.placa=placa;
+      document.getElementById('pg-titulo').textContent = placa==='todas'
+        ? 'Gravações recentes — toda a frota'
+        : 'Gravações recentes — ' + placa.slice(0,3)+'-'+placa.slice(3);
+      painel_de_gravacoes_aplicar();
+    }
+    function painel_de_gravacoes_status(el,st){
+      document.querySelectorAll('.pg-chip').forEach(function(b){b.classList.remove('pg-chip-on');});
+      el.classList.add('pg-chip-on'); pg_estado.status=st; painel_de_gravacoes_aplicar();
+    }
+    function painel_de_gravacoes_perfil(p){
+      var c=document.getElementById('pg-p-cliente'), e=document.getElementById('pg-p-equipe');
+      c.className='px-3 py-1.5'; e.className='px-3 py-1.5';
+      (p==='cliente'?c:e).className='px-3 py-1.5 bg-amber-500 text-slate-900 font-semibold';
+      document.getElementById('pg-equipe').classList.toggle('hidden', p!=='equipe');
+      painel_de_gravacoes_toast(p==='equipe'?'Perfil equipe técnica ativado':'Perfil cliente ativado');
+    }
+    function painel_de_gravacoes_atualizarFila(){
+      if(pg_estado.fila>0){pg_estado.fila--; pg_estado.ok++;}
+      document.getElementById('pg-kpi-fila').textContent=pg_estado.fila;
+      document.getElementById('pg-kpi-ok').textContent=pg_estado.ok;
+      painel_de_gravacoes_toast('Fila sincronizada com o MDVR · 1 clipe descarregado');
+    }
+    function painel_de_gravacoes_reenfileirar(btn){
+      var card=btn.closest('article');
+      card.dataset.status='fila';
+      card.querySelector('span.absolute.top-2.right-2').outerHTML='<span class="absolute top-2 right-2 text-[10px] bg-slate-600 text-slate-100 font-semibold px-1.5 py-0.5 rounded">Na fila</span>';
+      btn.outerHTML='<p class="mt-2 text-xs text-amber-400">Reenviado para a fila de descarregamento</p>';
+      pg_estado.fila++; document.getElementById('pg-kpi-fila').textContent=pg_estado.fila;
+      painel_de_gravacoes_toast('Clipe RTA-4F21 reenfileirado');
+      painel_de_gravacoes_aplicar();
+    }
+    function painel_de_gravacoes_exportar(){
+      var n=document.querySelectorAll('#pg-grade > article:not(.hidden)').length;
+      painel_de_gravacoes_toast('Exportando '+n+' gravações (.mp4 + relatório CSV)');
+    }
+    painel_de_gravacoes_perfil('cliente');
+  </script>
+</section>
+
+    <!-- TELAS -->
     </main>
 
     <footer class="border-t border-slate-200 bg-white px-6 py-3 flex flex-wrap items-center gap-x-6 gap-y-2">
