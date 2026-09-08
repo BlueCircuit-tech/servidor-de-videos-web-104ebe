@@ -1455,6 +1455,310 @@ tailwind.config = {
   </script>
 </section>
 
+    <section data-tela="painel-administrativo" class="hidden">
+  <style>
+    .pa-card{background:#fff;border:1px solid #e2e8f0;border-radius:10px}
+    .pa-tag{font-size:11px;font-weight:700;letter-spacing:.03em;padding:2px 8px;border-radius:999px;text-transform:uppercase}
+    .pa-th{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:#64748b;font-weight:700;padding:10px 14px;text-align:left;background:#f1f5f9}
+    .pa-td{padding:11px 14px;font-size:13px;border-top:1px solid #eef2f6;vertical-align:middle}
+    .pa-btn{background:#0f3d63;color:#fff;font-weight:600;font-size:13px;padding:9px 16px;border-radius:8px}
+    .pa-btn:hover{background:#14507f}
+    .pa-ghost{border:1px solid #cbd5e1;color:#0f3d63;font-weight:600;font-size:13px;padding:8px 14px;border-radius:8px;background:#fff}
+    .pa-ghost:hover{background:#f1f5f9}
+  </style>
+
+  <div class="px-6 py-6 max-w-[1600px] mx-auto" style="font-family:'Barlow Condensed','Archivo',sans-serif">
+
+    <div class="flex flex-wrap items-end justify-between gap-4 mb-6">
+      <div>
+        <p class="text-[11px] tracking-[.18em] font-bold text-slate-400 uppercase">Área restrita · Equipe</p>
+        <h1 class="text-3xl font-black text-[#0f3d63] leading-tight">Painel Administrativo</h1>
+        <p class="text-sm text-slate-500 mt-1">Frota Vialog Transportes · 42 dispositivos MDVR sincronizados</p>
+      </div>
+      <div class="flex flex-wrap gap-2">
+        <button onclick="mostrarTela('painel-de-gravacoes')" class="pa-ghost">← Painel de Gravações</button>
+        <button onclick="mostrarTela('central-de-alertas')" class="pa-ghost">🔔 Central de Alertas</button>
+        <button onclick="painel_administrativo_abrirConvite()" class="pa-btn">+ Convidar acesso</button>
+      </div>
+    </div>
+
+    <div class="grid gap-4 mb-6" style="grid-template-columns:repeat(auto-fit,minmax(230px,1fr))">
+      <div class="pa-card p-4">
+        <p class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Armazenamento usado</p>
+        <p class="text-2xl font-black text-[#0f3d63] mt-1">7,4 TB <span class="text-sm font-semibold text-slate-400">/ 12 TB</span></p>
+        <div class="h-2 bg-slate-200 rounded-full mt-2 overflow-hidden"><div class="h-2 bg-[#0f3d63]" style="width:62%"></div></div>
+        <p class="text-[11px] text-slate-500 mt-2">Retenção média: 34 dias</p>
+      </div>
+      <div class="pa-card p-4">
+        <p class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Fila de ingestão</p>
+        <p class="text-2xl font-black text-[#c2410c] mt-1" id="pa-fila">6 arquivos</p>
+        <p class="text-[11px] text-slate-500 mt-2">Descarregamento automático em curso · 118 MB/s</p>
+        <button onclick="painel_administrativo_processarFila()" class="mt-2 text-[12px] font-bold text-[#0f3d63] underline">Processar agora</button>
+      </div>
+      <div class="pa-card p-4">
+        <p class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Dispositivos online</p>
+        <p class="text-2xl font-black text-emerald-700 mt-1">38 <span class="text-sm font-semibold text-slate-400">de 42</span></p>
+        <p class="text-[11px] text-slate-500 mt-2">4 sem conexão há mais de 6h</p>
+      </div>
+      <div class="pa-card p-4">
+        <p class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Acessos hoje</p>
+        <p class="text-2xl font-black text-[#0f3d63] mt-1">27</p>
+        <p class="text-[11px] text-slate-500 mt-2">9 clientes · 18 equipe</p>
+      </div>
+    </div>
+
+    <div class="flex flex-wrap gap-1 border-b border-slate-200 mb-5" id="pa-abas">
+      <button data-aba="usuarios" onclick="painel_administrativo_aba('usuarios')" class="px-4 py-2 text-sm font-bold rounded-t-lg">Usuários e perfis</button>
+      <button data-aba="dispositivos" onclick="painel_administrativo_aba('dispositivos')" class="px-4 py-2 text-sm font-bold rounded-t-lg">Veículos e MDVR</button>
+      <button data-aba="retencao" onclick="painel_administrativo_aba('retencao')" class="px-4 py-2 text-sm font-bold rounded-t-lg">Regras de retenção</button>
+      <button data-aba="auditoria" onclick="painel_administrativo_aba('auditoria')" class="px-4 py-2 text-sm font-bold rounded-t-lg">Log de auditoria</button>
+    </div>
+
+    <div data-painel="usuarios">
+      <div class="grid gap-5" style="grid-template-columns:repeat(auto-fit,minmax(420px,1fr))">
+        <div class="pa-card overflow-hidden xl:col-span-2">
+          <div class="flex flex-wrap items-center justify-between gap-3 px-4 py-3 border-b border-slate-200">
+            <h2 class="font-bold text-[#0f3d63]">Usuários cadastrados</h2>
+            <select onchange="painel_administrativo_filtrarPerfil(this.value)" class="border border-slate-300 rounded-lg text-[13px] px-3 py-1.5">
+              <option value="todos">Todos os perfis</option>
+              <option value="Equipe">Somente equipe</option>
+              <option value="Cliente">Somente clientes</option>
+            </select>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full min-w-[720px]">
+              <thead><tr><th class="pa-th">Usuário</th><th class="pa-th">Perfil</th><th class="pa-th">Permissões</th><th class="pa-th">Último acesso</th><th class="pa-th">Ações</th></tr></thead>
+              <tbody id="pa-tbody-users"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="pa-card p-5" id="pa-box-convite">
+          <h2 class="font-bold text-[#0f3d63] mb-1">Convidar novo acesso</h2>
+          <p class="text-[12px] text-slate-500 mb-4">O convite é enviado por e-mail e por WhatsApp com senha temporária.</p>
+          <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1">Nome completo</label>
+          <input id="pa-inv-nome" placeholder="Ex.: Rodrigo Menezes" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm mb-3">
+          <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1">E-mail corporativo</label>
+          <input id="pa-inv-email" placeholder="rodrigo@vialog.com.br" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm mb-3">
+          <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1">WhatsApp</label>
+          <input id="pa-inv-fone" placeholder="(41) 99812-4407" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm mb-3">
+          <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1">Perfil de acesso</label>
+          <div class="flex gap-2 mb-3">
+            <button onclick="painel_administrativo_perfilConvite('Equipe')" data-pf="Equipe" class="pa-ghost flex-1">Equipe</button>
+            <button onclick="painel_administrativo_perfilConvite('Cliente')" data-pf="Cliente" class="pa-ghost flex-1">Cliente</button>
+          </div>
+          <label class="flex items-center gap-2 text-[13px] text-slate-600 mb-2"><input type="checkbox" id="pa-inv-down" class="accent-[#0f3d63]"> Permitir download de vídeos</label>
+          <label class="flex items-center gap-2 text-[13px] text-slate-600 mb-4"><input type="checkbox" id="pa-inv-wpp" checked class="accent-[#0f3d63]"> Receber alertas no WhatsApp</label>
+          <button onclick="painel_administrativo_enviarConvite()" class="pa-btn w-full">Enviar convite</button>
+          <p id="pa-inv-msg" class="hidden mt-3 text-[13px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-lg px-3 py-2"></p>
+        </div>
+      </div>
+    </div>
+
+    <div data-painel="dispositivos" class="hidden">
+      <div class="pa-card overflow-hidden mb-5">
+        <div class="flex flex-wrap items-center justify-between gap-3 px-4 py-3 border-b border-slate-200">
+          <h2 class="font-bold text-[#0f3d63]">Veículos e dispositivos MDVR</h2>
+          <button onclick="painel_administrativo_novoDispositivo()" class="pa-ghost">+ Vincular MDVR</button>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full min-w-[820px]">
+            <thead><tr><th class="pa-th">Veículo</th><th class="pa-th">MDVR / Série</th><th class="pa-th">Canais</th><th class="pa-th">Última descarga</th><th class="pa-th">Status</th><th class="pa-th">Ações</th></tr></thead>
+            <tbody id="pa-tbody-disp"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="pa-card p-4" id="pa-detalhe-disp">
+        <p class="text-[13px] text-slate-500">Selecione um dispositivo na tabela para ver detalhes de sincronização.</p>
+      </div>
+    </div>
+
+    <div data-painel="retencao" class="hidden">
+      <div class="grid gap-5" style="grid-template-columns:repeat(auto-fit,minmax(380px,1fr))">
+        <div class="pa-card p-5">
+          <h2 class="font-bold text-[#0f3d63] mb-4">Regras de retenção do armazenamento</h2>
+          <div id="pa-regras" class="space-y-3"></div>
+          <button onclick="painel_administrativo_salvarRetencao()" class="pa-btn mt-4">Salvar regras</button>
+          <p id="pa-ret-msg" class="hidden mt-3 text-[13px] font-semibold text-emerald-700">Regras aplicadas. Nova projeção de uso: <span id="pa-ret-proj"></span>.</p>
+        </div>
+        <div class="pa-card p-5">
+          <h2 class="font-bold text-[#0f3d63] mb-4">Ocupação por tipo de mídia</h2>
+          <div class="space-y-4 text-[13px]">
+            <div><div class="flex justify-between mb-1"><span class="font-semibold">Vídeo contínuo (4 canais)</span><span>4,9 TB</span></div><div class="h-2 bg-slate-200 rounded-full"><div class="h-2 rounded-full bg-[#0f3d63]" style="width:66%"></div></div></div>
+            <div><div class="flex justify-between mb-1"><span class="font-semibold">Eventos de frenagem / colisão</span><span>1,6 TB</span></div><div class="h-2 bg-slate-200 rounded-full"><div class="h-2 rounded-full bg-[#c2410c]" style="width:22%"></div></div></div>
+            <div><div class="flex justify-between mb-1"><span class="font-semibold">Fotos e documentos de viagem</span><span>0,7 TB</span></div><div class="h-2 bg-slate-200 rounded-full"><div class="h-2 rounded-full bg-emerald-600" style="width:9%"></div></div></div>
+            <div><div class="flex justify-between mb-1"><span class="font-semibold">Exportações de clientes</span><span>0,2 TB</span></div><div class="h-2 bg-slate-200 rounded-full"><div class="h-2 rounded-full bg-slate-500" style="width:3%"></div></div></div>
+          </div>
+          <button onclick="mostrarTela('fotos-e-documentos')" class="pa-ghost mt-5">Ver fotos e documentos</button>
+        </div>
+      </div>
+    </div>
+
+    <div data-painel="auditoria" class="hidden">
+      <div class="pa-card overflow-hidden">
+        <div class="flex flex-wrap items-center justify-between gap-3 px-4 py-3 border-b border-slate-200">
+          <h2 class="font-bold text-[#0f3d63]">Log de auditoria de acessos</h2>
+          <div class="flex gap-2">
+            <button onclick="painel_administrativo_filtrarLog('todos')" class="pa-ghost">Tudo</button>
+            <button onclick="painel_administrativo_filtrarLog('Download')" class="pa-ghost">Downloads</button>
+            <button onclick="painel_administrativo_filtrarLog('Login')" class="pa-ghost">Logins</button>
+          </div>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full min-w-[760px]">
+            <thead><tr><th class="pa-th">Data/hora</th><th class="pa-th">Usuário</th><th class="pa-th">Ação</th><th class="pa-th">Recurso</th><th class="pa-th">IP</th></tr></thead>
+            <tbody id="pa-tbody-log"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+<script>
+const PA_USERS=[
+ {n:'Marcelo Tavares',e:'marcelo.tavares@vialog.com.br',p:'Equipe',perm:['Ver todas as frotas','Download','Admin'],ac:'Hoje 08:42'},
+ {n:'Juliana Prado',e:'juliana.prado@vialog.com.br',p:'Equipe',perm:['Ver todas as frotas','Download'],ac:'Hoje 07:15'},
+ {n:'Anderson Ribeiro',e:'anderson@transbrasilcargas.com.br',p:'Cliente',perm:['Frota TBC (8 veículos)'],ac:'Ontem 18:30'},
+ {n:'Carla Nogueira',e:'carla.nogueira@agroluz.com.br',p:'Cliente',perm:['Frota Agroluz (5 veículos)','Download'],ac:'12/06 14:07'},
+ {n:'Wesley Amorim',e:'wesley.amorim@vialog.com.br',p:'Equipe',perm:['Ingestão MDVR'],ac:'Hoje 09:05'}
+];
+const PA_DISP=[
+ {v:'MBB Actros 2651 · PWR-4E12',s:'Streamax C6-4H · SN 88213401',c:4,u:'Hoje 09:12',st:'Sincronizado',d:'Rota Curitiba → Joinville. 62 GB descarregados via 4G no pátio da Cidade Industrial.'},
+ {v:'Volvo FH 460 · QAB-7J55',s:'Howen Hero-ME40 · SN 71992055',c:6,u:'Hoje 08:47',st:'Sincronizado',d:'Rota Cascavel → Paranaguá. Evento de frenagem brusca às 06:22 marcado para retenção estendida.'},
+ {v:'Scania R450 · RKS-2C08',s:'Streamax C6-4H · SN 88213519',c:4,u:'Ontem 22:04',st:'Fila',d:'12 blocos pendentes. Aguardando Wi-Fi do pátio de Londrina para descarregamento automático.'},
+ {v:'VW Delivery 11.180 · SDF-9H41',s:'Jimi JM-VD05 · SN 40118872',c:2,u:'11/06 19:38',st:'Offline',d:'Sem heartbeat há 39h. Verificar fusível do MDVR na manutenção de Ponta Grossa.'}
+];
+const PA_LOG=[
+ {d:'16/06 09:31',u:'Anderson Ribeiro (Cliente)',a:'Download',r:'PWR-4E12 · cam frontal 06:10-06:25',ip:'201.17.44.90'},
+ {d:'16/06 09:05',u:'Wesley Amorim (Equipe)',a:'Login',r:'Painel Administrativo',ip:'177.92.11.4'},
+ {d:'16/06 08:52',u:'Juliana Prado (Equipe)',a:'Exclusão',r:'Lote retenção 30d · 214 arquivos',ip:'177.92.11.7'},
+ {d:'16/06 08:20',u:'Carla Nogueira (Cliente)',a:'Login',r:'Painel de Gravações',ip:'189.5.201.66'},
+ {d:'15/06 18:44',u:'Marcelo Tavares (Equipe)',a:'Download',r:'QAB-7J55 · evento frenagem 06:22',ip:'177.92.11.2'}
+];
+const PA_REGRAS=[
+ {t:'Vídeo contínuo (todos os canais)',v:30},
+ {t:'Eventos de frenagem e colisão',v:180},
+ {t:'Fotos e documentos de viagem',v:365},
+ {t:'Exportações solicitadas por clientes',v:15}
+];
+let pa_perfilConvite='Equipe';
+
+function painel_administrativo_tagPerfil(p){
+ return p==='Equipe'?'<span class="pa-tag bg-[#0f3d63] text-white">Equipe</span>':'<span class="pa-tag bg-amber-100 text-amber-800">Cliente</span>';
+}
+function painel_administrativo_renderUsers(f){
+ const t=document.getElementById('pa-tbody-users');
+ t.innerHTML=PA_USERS.filter(u=>!f||f==='todos'||u.p===f).map((u,i)=>`<tr>
+  <td class="pa-td"><p class="font-bold text-slate-800">${u.n}</p><p class="text-[12px] text-slate-500">${u.e}</p></td>
+  <td class="pa-td">${painel_administrativo_tagPerfil(u.p)}</td>
+  <td class="pa-td"><div class="flex flex-wrap gap-1">${u.perm.map(p=>`<span class="pa-tag bg-slate-100 text-slate-600">${p}</span>`).join('')}</div></td>
+  <td class="pa-td text-slate-600">${u.ac}</td>
+  <td class="pa-td"><button onclick="painel_administrativo_alternarPerfil(${PA_USERS.indexOf(u)})" class="text-[12px] font-bold text-[#0f3d63] underline">Trocar perfil</button>
+  <button onclick="painel_administrativo_toggleDownload(${PA_USERS.indexOf(u)})" class="ml-3 text-[12px] font-bold text-[#c2410c] underline">Download</button></td></tr>`).join('');
+}
+function painel_administrativo_filtrarPerfil(v){painel_administrativo_renderUsers(v);}
+function painel_administrativo_alternarPerfil(i){PA_USERS[i].p=PA_USERS[i].p==='Equipe'?'Cliente':'Equipe';painel_administrativo_renderUsers('todos');}
+function painel_administrativo_toggleDownload(i){
+ const u=PA_USERS[i];const k=u.perm.indexOf('Download');
+ if(k>=0)u.perm.splice(k,1);else u.perm.push('Download');
+ painel_administrativo_renderUsers('todos');
+}
+function painel_administrativo_perfilConvite(p){
+ pa_perfilConvite=p;
+ document.querySelectorAll('#pa-box-convite [data-pf]').forEach(b=>{
+  const on=b.dataset.pf===p;
+  b.style.background=on?'#0f3d63':'#fff';b.style.color=on?'#fff':'#0f3d63';
+ });
+}
+function painel_administrativo_abrirConvite(){
+ painel_administrativo_aba('usuarios');
+ document.getElementById('pa-inv-nome').focus();
+}
+function painel_administrativo_enviarConvite(){
+ const n=document.getElementById('pa-inv-nome').value.trim()||'Novo usuário';
+ const e=document.getElementById('pa-inv-email').value.trim()||'sem-email@vialog.com.br';
+ const f=document.getElementById('pa-inv-fone').value.trim();
+ const dl=document.getElementById('pa-inv-down').checked;
+ const wpp=document.getElementById('pa-inv-wpp').checked;
+ const perm=pa_perfilConvite==='Equipe'?['Ver todas as frotas']:['Frota do cliente'];
+ if(dl)perm.push('Download');
+ PA_USERS.unshift({n:n,e:e,p:pa_perfilConvite,perm:perm,ac:'Convite pendente'});
+ painel_administrativo_renderUsers('todos');
+ const m=document.getElementById('pa-inv-msg');
+ m.classList.remove('hidden');
+ m.textContent='Convite enviado para '+e+(wpp&&f?' e WhatsApp '+f:'')+' · perfil '+pa_perfilConvite+'.';
+ document.getElementById('pa-inv-nome').value='';document.getElementById('pa-inv-email').value='';document.getElementById('pa-inv-fone').value='';
+}
+function painel_administrativo_renderDisp(){
+ document.getElementById('pa-tbody-disp').innerHTML=PA_DISP.map((d,i)=>{
+  const cor=d.st==='Sincronizado'?'bg-emerald-100 text-emerald-800':(d.st==='Fila'?'bg-amber-100 text-amber-800':'bg-rose-100 text-rose-700');
+  return `<tr class="hover:bg-slate-50 cursor-pointer" onclick="painel_administrativo_verDisp(${i})">
+  <td class="pa-td font-bold text-slate-800">${d.v}</td>
+  <td class="pa-td text-slate-600">${d.s}</td>
+  <td class="pa-td">${d.c} canais</td>
+  <td class="pa-td text-slate-600">${d.u}</td>
+  <td class="pa-td"><span class="pa-tag ${cor}">${d.st}</span></td>
+  <td class="pa-td"><button onclick="event.stopPropagation();mostrarTela('player-do-video')" class="text-[12px] font-bold text-[#0f3d63] underline">Abrir vídeo</button></td></tr>`;
+ }).join('');
+}
+function painel_administrativo_verDisp(i){
+ const d=PA_DISP[i];
+ document.getElementById('pa-detalhe-disp').innerHTML=`<div class="flex flex-wrap items-start justify-between gap-3">
+  <div><p class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Dispositivo selecionado</p>
+  <h3 class="font-black text-lg text-[#0f3d63]">${d.v}</h3>
+  <p class="text-[13px] text-slate-600 mt-1 max-w-2xl">${d.d}</p></div>
+  <div class="flex gap-2"><button onclick="painel_administrativo_forcarDescarga(${i})" class="pa-ghost">Forçar descarregamento</button>
+  <button onclick="mostrarTela('busca-e-filtros')" class="pa-btn">Buscar gravações</button></div></div>`;
+}
+function painel_administrativo_forcarDescarga(i){
+ PA_DISP[i].st='Fila';PA_DISP[i].u='Agora · enfileirado';
+ painel_administrativo_renderDisp();painel_administrativo_verDisp(i);
+ const f=document.getElementById('pa-fila');
+ f.textContent=(parseInt(f.textContent)+3)+' arquivos';
+}
+function painel_administrativo_novoDispositivo(){
+ PA_DISP.push({v:'Iveco Tector 240 · TJP-5B77',s:'Streamax C6-4H · SN 88213620',c:4,u:'Aguardando 1ª conexão',st:'Fila',d:'MDVR vinculado agora. Aguardando primeiro heartbeat para iniciar descarregamento automático.'});
+ painel_administrativo_renderDisp();painel_administrativo_verDisp(PA_DISP.length-1);
+}
+function painel_administrativo_renderRegras(){
+ document.getElementById('pa-regras').innerHTML=PA_REGRAS.map((r,i)=>`<div class="flex flex-wrap items-center justify-between gap-3 border border-slate-200 rounded-lg px-3 py-2">
+  <span class="text-[13px] font-semibold text-slate-700">${r.t}</span>
+  <span class="flex items-center gap-2"><input type="number" value="${r.v}" onchange="PA_REGRAS[${i}].v=+this.value" class="w-20 border border-slate-300 rounded-lg px-2 py-1 text-sm text-right"><span class="text-[12px] text-slate-500">dias</span></span></div>`).join('');
+}
+function painel_administrativo_salvarRetencao(){
+ const soma=PA_REGRAS.reduce((a,r)=>a+r.v,0);
+ document.getElementById('pa-ret-proj').textContent=(6.1+soma/220).toFixed(1)+' TB de 12 TB';
+ document.getElementById('pa-ret-msg').classList.remove('hidden');
+}
+function painel_administrativo_renderLog(f){
+ document.getElementById('pa-tbody-log').innerHTML=PA_LOG.filter(l=>!f||f==='todos'||l.a===f).map(l=>`<tr class="hover:bg-slate-50">
+  <td class="pa-td text-slate-600">${l.d}</td><td class="pa-td font-semibold text-slate-800">${l.u}</td>
+  <td class="pa-td"><span class="pa-tag ${l.a==='Download'?'bg-sky-100 text-sky-800':(l.a==='Exclusão'?'bg-rose-100 text-rose-700':'bg-slate-100 text-slate-600')}">${l.a}</span></td>
+  <td class="pa-td text-slate-600">${l.r}</td><td class="pa-td text-slate-500">${l.ip}</td></tr>`).join('');
+}
+function painel_administrativo_filtrarLog(f){painel_administrativo_renderLog(f);}
+function painel_administrativo_processarFila(){
+ document.getElementById('pa-fila').textContent='0 arquivos';
+ PA_DISP.forEach(d=>{if(d.st==='Fila'){d.st='Sincronizado';d.u='Agora · concluído';}});
+ painel_administrativo_renderDisp();
+}
+function painel_administrativo_aba(a){
+ document.querySelectorAll('#pa-abas button').forEach(b=>{
+  const on=b.dataset.aba===a;
+  b.style.background=on?'#0f3d63':'transparent';b.style.color=on?'#fff':'#64748b';
+ });
+ document.querySelectorAll('[data-painel]').forEach(p=>p.classList.toggle('hidden',p.dataset.painel!==a));
+}
+painel_administrativo_renderUsers('todos');
+painel_administrativo_renderDisp();
+painel_administrativo_renderRegras();
+painel_administrativo_renderLog('todos');
+painel_administrativo_perfilConvite('Equipe');
+painel_administrativo_aba('usuarios');
+</script>
+</section>
+
     <!-- TELAS -->
     </main>
 
