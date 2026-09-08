@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VIACAM MDVR — Servidor de Vídeos Veicular</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        aco: { 950: '#0B1016', 900: '#121A23', 850: '#18222E', 800: '#1F2B39', 700: '#2C3B4D', 600: '#3D5064', 400: '#7B8CA0', 300: '#A6B4C4' },
+        ambar: { DEFAULT: '#F2A31B', 600: '#D98A0B', 300: '#FFC964' },
+        sinal: { verde: '#26B36A', vermelho: '#E03E3E', azul: '#2F80ED' },
+        papel: '#F3F5F7'
+      },
+      fontFamily: {
+        sans: ['"IBM Plex Sans"', 'sans-serif'],
+        titulo: ['"Barlow Condensed"', 'sans-serif'],
+        mono: ['"IBM Plex Mono"', 'monospace']
+      }
+    }
+  }
+}
+</script>
+<style>
+  html { scroll-behavior: smooth; }
+  body { background: #F3F5F7; }
+  [data-nav] { position: relative; }
+  [data-nav].ativo {
+    background: #1F2B39;
+    color: #FFC964;
+    box-shadow: inset 3px 0 0 0 #F2A31B;
+  }
+  [data-nav].ativo .ico { color: #F2A31B; }
+  ::-webkit-scrollbar { height: 10px; width: 10px; }
+  ::-webkit-scrollbar-track { background: #E3E8ED; }
+  ::-webkit-scrollbar-thumb { background: #A6B4C4; border-radius: 6px; }
+  ::-webkit-scrollbar-thumb:hover { background: #7B8CA0; }
+  .grade-fundo {
+    background-image: linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
+                      linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
+    background-size: 22px 22px;
+  }
+</style>
+</head>
+<body class="font-sans text-aco-900 antialiased">
+
+<div class="flex min-h-screen">
+
+  <!-- ===== MENU LATERAL ===== -->
+  <aside class="w-[248px] shrink-0 bg-aco-950 grade-fundo text-aco-300 flex flex-col fixed inset-y-0 left-0 z-30">
+
+    <div class="px-5 py-5 border-b border-aco-800">
+      <div class="flex items-center gap-3">
+        <div class="h-10 w-10 rounded bg-ambar flex items-center justify-center shrink-0">
+          <svg viewBox="0 0 24 24" fill="none" class="h-6 w-6 text-aco-950">
+            <path d="M2 7.5A1.5 1.5 0 0 1 3.5 6h9A1.5 1.5 0 0 1 14 7.5v9A1.5 1.5 0 0 1 12.5 18h-9A1.5 1.5 0 0 1 2 16.5v-9Z" fill="currentColor"/>
+            <path d="M16 10.2l4.3-2.5c.7-.4 1.7.1 1.7.9v6.8c0 .8-1 1.3-1.7.9L16 13.8v-3.6Z" fill="currentColor"/>
+          </svg>
+        </div>
+        <div class="leading-none">
+          <p class="font-titulo text-2xl tracking-wide text-white">VIACAM<span class="text-ambar">·</span>MDVR</p>
+          <p class="text-[10px] uppercase tracking-[0.18em] text-aco-400 mt-1">Servidor de Vídeos</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="px-5 py-3 border-b border-aco-800 flex items-center gap-2">
+      <span class="h-2 w-2 rounded-full bg-sinal-verde animate-pulse"></span>
+      <span class="text-[11px] font-mono uppercase tracking-wider text-aco-400">Sincronizando · 34 veículos on-line</span>
+    </div>
+
+    <nav class="flex-1 overflow-y-auto py-4">
+      <p class="px-5 pb-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-aco-600">Operação</p>
+
+      <button data-nav="painel-de-gravacoes" onclick="mostrarTela('painel-de-gravacoes')"
+        class="w-full text-left px-5 py-2.5 flex items-center gap-3 text-sm hover:bg-aco-900 hover:text-white transition">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" class="ico h-[18px] w-[18px] text-aco-400"><rect x="3" y="4" width="7" height="7" rx="1.5"/><rect x="14" y="4" width="7" height="7" rx="1.5"/><rect x="3" y="15" width="7" height="5" rx="1.5"/><rect x="14" y="15" width="7" height="5" rx="1.5"/></svg>
+        Painel de Gravações
+      </button>
+
+      <button data-nav="busca-e-filtros" onclick="mostrarTela('busca-e-filtros')"
+        class="w-full text-left px-5 py-2.5 flex items-center gap-3 text-sm hover:bg-aco-900 hover:text-white transition">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" class="ico h-[18px] w-[18px] text-aco-400"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg>
+        Busca e Filtros
+      </button>
+
+      <button data-nav="player-do-video" onclick="mostrarTela('player-do-video')"
+        class="w-full text-left px-5 py-2.5 flex items-center gap-3 text-sm hover:bg-aco-900 hover:text-white transition">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" class="ico h-[18px] w-[18px] text-aco-400"><rect x="2.5" y="5" width="19" height="14" rx="2"/><path d="M10.5 9.3l4.2 2.7-4.2 2.7V9.3Z" fill="currentColor" stroke="none"/></svg>
+        Player do Vídeo
+      </button>
+
+      <p class="px-5 pt-5 pb-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-aco-600">Acervo</p>
+
+      <button data-nav="fotos-e-documentos" onclick="mostrarTela('fotos-e-documentos')"
+        class="w-full text-left px-5 py-2.5 flex items-center gap-3 text-sm hover:bg-aco-900 hover:text-white transition">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" class="ico h-[18px] w-[18px] text-aco-400"><path d="M4 6.5A2.5 2.5 0 0 1 6.5 4h5l2 2.5h4A2.5 2.5 0 0 1 20 9v8.5A2.5 2.5 0 0 1 17.5 20h-11A2.5 2.5 0 0 1 4 17.5v-11Z"/><circle cx="12" cy="13" r="2.6"/></svg>
+        Fotos e Documentos
+      </button>
+
+      <button data-nav="central-de-alertas" onclick="mostrarTela('central-de-alertas')"
+        class="w-full text-left px-5 py-2.5 flex items-center gap-3 text-sm hover:bg-aco-900 hover:text-white transition">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" class="ico h-[18px] w-[18px] text-aco-400"><path d="M12 4a5.5 5.5 0 0 0-5.5 5.5c0 4-1.5 5.5-1.5 5.5h14s-1.5-1.5-1.5-5.5A5.5 5.5 0 0 0 12 4Z"/><path d="M10 18.5a2 2 0 0 0 4 0"/></svg>
+        Central de Alertas
+        <span class="ml-auto text-[10px] font-mono font-semibold bg-sinal-vermelho text-white rounded px-1.5 py-0.5">7</span>
+      </button>
+
+      <p class="px-5 pt-5 pb-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-aco-600">Gestão</p>
+
+      <button data-nav="painel-administrativo" onclick="mostrarTela('painel-administrativo')"
+        class="w-full text-left px-5 py-2.5 flex items-center gap-3 text-sm hover:bg-aco-900 hover:text-white transition">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" class="ico h-[18px] w-[18px] text-aco-400"><path d="M4 19V9m5 10V5m5 14v-7m5 7V8"/></svg>
+        Painel Administrativo
+      </button>
+    </nav>
+
+    <div class="border-t border-aco-800 px-5 py-4">
+      <div class="flex items-center gap-3">
+        <div class="h-9 w-9 rounded bg-aco-700 flex items-center justify-center font-titulo text-lg text-ambar-300 shrink-0">RM</div>
+        <div class="min-w-0">
+          <p class="text-sm font-medium text-white truncate">Rogério Maciel</p>
+          <p class="text-[10px] uppercase tracking-wider text-ambar">Perfil: Equipe / Admin</p>
+        </div>
+      </div>
+      <p class="mt-3 text-[10px] font-mono text-aco-600">Transluz Logística · CNPJ 18.404.***/0001</p>
+    </div>
+  </aside>
+
+  <!-- ===== CONTEÚDO ===== -->
+  <div class="flex-1 ml-[248px] min-w-0 flex flex-col">
+
+    <header class="sticky top-0 z-20 bg-white border-b border-slate-200">
+      <div class="px-6 py-3 flex flex-wrap items-center gap-x-6 gap-y-3">
+        <div class="min-w-0">
+          <p class="font-titulo text-2xl leading-none text-aco-900">Central de Descarga MDVR</p>
+          <p class="text-xs text-aco-400 mt-1">Frota Transluz · Filial Betim (MG) · atualizado às 14:38</p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2 ml-auto">
+          <div class="hidden xl:flex items-center gap-2 rounded border border-slate-200 bg-papel px-3 py-1.5">
+            <span class="text-[10px] font-mono uppercase tracking-wider text-aco-400">Fila de download</span>
+            <span class="text-sm font-mono font-semibold text-ambar-600">12 arquivos</span>
+          </div>
+          <div class="hidden lg:flex items-center gap-2 rounded border border-slate-200 bg-papel px-3 py-1.5">
+            <span class="h-2 w-2 rounded-full bg-sinal-verde"></span>
+            <span class="text-[11px] font-mono uppercase tracking-wider text-aco-600">Storage 62% · 4,1 TB</span>
+          </div>
+          <button onclick="mostrarTela('central-de-alertas')" title="Alertas WhatsApp e push"
+            class="relative h-9 w-9 rounded border border-slate-200 bg-white hover:bg-papel flex items-center justify-center transition">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" class="h-[18px] w-[18px] text-aco-600"><path d="M12 4a5.5 5.5 0 0 0-5.5 5.5c0 4-1.5 5.5-1.5 5.5h14s-1.5-1.5-1.5-5.5A5.5 5.5 0 0 0 12 4Z"/><path d="M10 18.5a2 2 0 0 0 4 0"/></svg>
+            <span class="absolute -top-1 -right-1 h-4 min-w-4 px-1 rounded-full bg-sinal-vermelho text-white text-[10px] font-mono leading-4">7</span>
+          </button>
+          <button onclick="mostrarTela('busca-e-filtros')"
+            class="h-9 rounded bg-aco-900 hover:bg-aco-800 text-white text-sm font-medium px-4 flex items-center gap-2 transition">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="h-4 w-4"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg>
+            Buscar gravação
+          </button>
+          <button onclick="mostrarTela('painel-administrativo')"
+            class="h-9 rounded bg-ambar hover:bg-ambar-600 text-aco-950 text-sm font-semibold px-4 transition">
+            Administrar
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="flex-1 p-6 min-w-0">
+<!-- TELAS -->
+    </main>
+
+    <footer class="border-t border-slate-200 bg-white px-6 py-3 flex flex-wrap items-center gap-x-6 gap-y-2">
+      <p class="text-[11px] font-mono text-aco-400">VIACAM·MDVR v2.4 · protótipo navegável</p>
+      <div class="ml-auto flex flex-wrap items-center gap-4">
+        <button onclick="mostrarTela('painel-de-gravacoes')" class="text-[11px] text-aco-600 hover:text-ambar-600 transition">Gravações</button>
+        <button onclick="mostrarTela('fotos-e-documentos')" class="text-[11px] text-aco-600 hover:text-ambar-600 transition">Acervo</button>
+        <button onclick="mostrarTela('central-de-alertas')" class="text-[11px] text-aco-600 hover:text-ambar-600 transition">Alertas</button>
+        <button onclick="mostrarTela('painel-administrativo')" class="text-[11px] text-aco-600 hover:text-ambar-600 transition">Usuários e perfis</button>
+      </div>
+    </footer>
+
+  </div>
+</div>
+
+<script>
+function mostrarTela(id) {
+  document.querySelectorAll('[data-tela]').forEach(function (s) {
+    s.classList.toggle('hidden', s.dataset.tela !== id);
+  });
+  document.querySelectorAll('[data-nav]').forEach(function (b) {
+    b.classList.toggle('ativo', b.dataset.nav === id);
+  });
+  window.scrollTo({ top: 0 });
+}
+document.addEventListener('DOMContentLoaded', function () {
+  mostrarTela('painel-de-gravacoes');
+});
+</script>
+</body>
+</html>
