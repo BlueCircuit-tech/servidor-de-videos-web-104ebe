@@ -712,6 +712,230 @@ tailwind.config = {
   </script>
 </section>
 
+    <section data-tela="player-do-video" class="hidden">
+  <style>
+    .pv-card{background:#111826;border:1px solid #1f2b3e;border-radius:.75rem}
+    .pv-lbl{font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;color:#64748b}
+    .pv-val{font-size:.86rem;color:#e2e8f0;font-weight:600}
+    .pv-btn{display:inline-flex;align-items:center;gap:.4rem;padding:.5rem .85rem;border-radius:.5rem;font-size:.82rem;font-weight:600;transition:.15s}
+    .pv-tab{padding:.55rem .9rem;font-size:.8rem;font-weight:600;border-bottom:2px solid transparent;color:#64748b;cursor:pointer}
+    .pv-tab.ativo{color:#22d3ee;border-color:#22d3ee}
+  </style>
+
+  <div class="px-6 py-5 bg-[#0b1120] min-h-full text-slate-200">
+
+    <div class="flex flex-wrap items-center gap-3 justify-between mb-5">
+      <div class="flex items-center gap-3 flex-wrap">
+        <button onclick="mostrarTela('painel-de-gravacoes')" class="pv-btn bg-[#1f2b3e] text-slate-300 hover:bg-[#2a3a53]">← Gravações</button>
+        <div>
+          <h1 class="text-xl font-bold text-white">GRV-2024-08917 · Câmera 1 — Frontal</h1>
+          <p class="text-xs text-slate-400">Placa RQL-7C42 · Scania R450 · Descarregada automaticamente do MDVR em 12/06/2024 23:47</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 flex-wrap">
+        <span class="px-2.5 py-1 rounded-full bg-emerald-500/15 text-emerald-400 text-xs font-semibold">● Íntegro · SHA-256 conferido</span>
+        <button onclick="mostrarTela('busca-e-filtros')" class="pv-btn bg-[#1f2b3e] text-slate-300 hover:bg-[#2a3a53]">Nova busca</button>
+      </div>
+    </div>
+
+    <div class="grid gap-5" style="grid-template-columns:repeat(auto-fit,minmax(340px,1fr))">
+
+      <div class="space-y-4" style="grid-column:span 2;min-width:0">
+        <div class="pv-card overflow-hidden">
+          <div class="relative bg-black aspect-video flex items-center justify-center">
+            <div class="absolute inset-0 opacity-30" style="background:radial-gradient(circle at 30% 40%,#1e3a5f,#000 70%)"></div>
+            <div id="pv-overlay-play" class="relative text-center">
+              <div class="text-6xl mb-2">▶</div>
+              <p class="text-sm text-slate-400">Clique para reproduzir o trecho</p>
+            </div>
+            <div class="absolute top-3 left-3 text-[11px] font-mono bg-black/60 px-2 py-1 rounded text-cyan-300" id="pv-osd">CAM1 · RQL-7C42 · 12/06/2024 23:41:<span id="pv-osd-seg">02</span></div>
+            <div class="absolute top-3 right-3 text-[11px] font-mono bg-red-600/80 px-2 py-1 rounded text-white">● GPS 62 km/h · BR-116 km 218</div>
+          </div>
+
+          <div class="px-4 py-3 bg-[#0f1725] border-t border-[#1f2b3e]">
+            <div class="flex items-center gap-3 mb-2">
+              <span class="text-xs font-mono text-slate-400" id="pv-tempo">00:12</span>
+              <div class="flex-1 h-2 rounded-full bg-[#1f2b3e] cursor-pointer relative" onclick="player_do_video_seek(event)">
+                <div id="pv-barra" class="h-2 rounded-full bg-cyan-400" style="width:8%"></div>
+                <div class="absolute top-1/2 -translate-y-1/2 w-1.5 h-4 rounded bg-amber-400" style="left:34%" title="Alerta: frenagem brusca"></div>
+                <div class="absolute top-1/2 -translate-y-1/2 w-1.5 h-4 rounded bg-red-500" style="left:61%" title="Alerta: colisão detectada"></div>
+              </div>
+              <span class="text-xs font-mono text-slate-400">02:34</span>
+            </div>
+            <div class="flex flex-wrap items-center gap-2 justify-between">
+              <div class="flex items-center gap-2">
+                <button onclick="player_do_video_toggle()" class="pv-btn bg-cyan-500 text-slate-900 hover:bg-cyan-400 w-24 justify-center" id="pv-btn-play">▶ Play</button>
+                <button onclick="player_do_video_pular(-10)" class="pv-btn bg-[#1f2b3e] text-slate-300 hover:bg-[#2a3a53]">⏪ 10s</button>
+                <button onclick="player_do_video_pular(10)" class="pv-btn bg-[#1f2b3e] text-slate-300 hover:bg-[#2a3a53]">10s ⏩</button>
+                <span class="text-xs text-slate-500 ml-1">Velocidade</span>
+                <div class="flex rounded-lg overflow-hidden border border-[#1f2b3e]" id="pv-vel">
+                  <button onclick="player_do_video_vel(this,'0,5x')" class="px-2.5 py-1 text-xs text-slate-400 hover:bg-[#1f2b3e]">0,5x</button>
+                  <button onclick="player_do_video_vel(this,'1x')" class="px-2.5 py-1 text-xs bg-cyan-500 text-slate-900 font-bold">1x</button>
+                  <button onclick="player_do_video_vel(this,'2x')" class="px-2.5 py-1 text-xs text-slate-400 hover:bg-[#1f2b3e]">2x</button>
+                  <button onclick="player_do_video_vel(this,'4x')" class="px-2.5 py-1 text-xs text-slate-400 hover:bg-[#1f2b3e]">4x</button>
+                </div>
+              </div>
+              <div class="flex items-center gap-2">
+                <button onclick="player_do_video_marcar()" class="pv-btn bg-[#1f2b3e] text-amber-300 hover:bg-[#2a3a53]">⚑ Marcar trecho</button>
+                <button onclick="player_do_video_fullscreen()" class="pv-btn bg-[#1f2b3e] text-slate-300 hover:bg-[#2a3a53]" id="pv-fs">⛶ Tela cheia</button>
+              </div>
+            </div>
+            <p id="pv-status" class="text-xs text-cyan-300 mt-2 hidden"></p>
+          </div>
+        </div>
+
+        <div class="pv-card p-4">
+          <div class="grid gap-4" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr))">
+            <div><p class="pv-lbl">Veículo</p><p class="pv-val">RQL-7C42 · Scania R450</p></div>
+            <div><p class="pv-lbl">Motorista</p><p class="pv-val">Anderson Ribeiro da Silva</p></div>
+            <div><p class="pv-lbl">Frota / Cliente</p><p class="pv-val">Transportes Vale Norte</p></div>
+            <div><p class="pv-lbl">Câmera</p><p class="pv-val">CAM1 — Frontal (1080p)</p></div>
+            <div><p class="pv-lbl">Data / Hora</p><p class="pv-val">12/06/2024 · 23:41:02</p></div>
+            <div><p class="pv-lbl">Duração</p><p class="pv-val">02:34 (154 s)</p></div>
+            <div><p class="pv-lbl">Origem MDVR</p><p class="pv-val">Streamax X5-H · Canal 1</p></div>
+            <div><p class="pv-lbl">Descarga</p><p class="pv-val">Automática · Wi-Fi pátio Curitiba</p></div>
+            <div><p class="pv-lbl">Tamanho</p><p class="pv-val">248 MB · H.265</p></div>
+            <div><p class="pv-lbl">Rota</p><p class="pv-val">Curitiba → Joinville</p></div>
+          </div>
+          <div class="flex flex-wrap gap-2 mt-4 pt-4 border-t border-[#1f2b3e]">
+            <button onclick="player_do_video_acao('Download iniciado: GRV-2024-08917_CAM1.mp4 (248 MB)')" class="pv-btn bg-cyan-500 text-slate-900 hover:bg-cyan-400">⬇ Baixar vídeo</button>
+            <button onclick="player_do_video_acao('Exportação do trecho 00:52 → 01:38 na fila. Aviso por push ao concluir.')" class="pv-btn bg-[#1f2b3e] text-cyan-300 hover:bg-[#2a3a53]">✂ Exportar trecho</button>
+            <button onclick="player_do_video_compartilhar()" class="pv-btn bg-[#1f2b3e] text-slate-300 hover:bg-[#2a3a53]">🔗 Compartilhar link</button>
+            <button onclick="mostrarTela('central-de-alertas')" class="pv-btn bg-amber-500/15 text-amber-300 hover:bg-amber-500/25">⚠ Ver alertas da viagem</button>
+          </div>
+          <div id="pv-link" class="hidden mt-3 flex flex-wrap items-center gap-2 bg-[#0f1725] border border-[#1f2b3e] rounded-lg p-3">
+            <span class="text-xs font-mono text-cyan-300 break-all">https://videos.valenorte.com.br/v/8917?t=72h&amp;pin=4471</span>
+            <span class="text-[11px] text-slate-500">expira em 72h</span>
+            <button onclick="player_do_video_acao('Link enviado por WhatsApp para Marcos Tavares (Segurança) · +55 41 99872-1140')" class="pv-btn bg-emerald-600 text-white hover:bg-emerald-500 text-xs">Enviar no WhatsApp</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="space-y-4" style="min-width:0">
+        <div class="pv-card">
+          <div class="flex border-b border-[#1f2b3e] px-2">
+            <div class="pv-tab ativo" data-aba="cameras" onclick="player_do_video_aba('cameras',this)">Câmeras (4)</div>
+            <div class="pv-tab" data-aba="anexos" onclick="player_do_video_aba('anexos',this)">Anexos (3)</div>
+            <div class="pv-tab" data-aba="log" onclick="player_do_video_aba('log',this)">Log</div>
+          </div>
+
+          <div id="pv-aba-cameras" class="p-3 space-y-2">
+            <p class="text-xs text-slate-500 px-1 mb-1">Mesmo horário — 12/06 23:41:02</p>
+            <div class="pv-cam flex gap-3 items-center p-2 rounded-lg cursor-pointer bg-cyan-500/10 border border-cyan-500/40" onclick="player_do_video_cam(this,'CAM1 — Frontal')">
+              <div class="w-20 h-12 rounded bg-black flex items-center justify-center text-[10px] text-cyan-400 shrink-0">CAM1</div>
+              <div class="min-w-0"><p class="text-sm font-semibold text-white truncate">Frontal (para-brisa)</p><p class="text-xs text-slate-500">1080p · 248 MB · em exibição</p></div>
+            </div>
+            <div class="pv-cam flex gap-3 items-center p-2 rounded-lg cursor-pointer border border-transparent hover:bg-[#1a2333]" onclick="player_do_video_cam(this,'CAM2 — Cabine')">
+              <div class="w-20 h-12 rounded bg-black flex items-center justify-center text-[10px] text-slate-500 shrink-0">CAM2</div>
+              <div class="min-w-0"><p class="text-sm font-semibold text-slate-200 truncate">Cabine / motorista</p><p class="text-xs text-slate-500">720p · 131 MB</p></div>
+            </div>
+            <div class="pv-cam flex gap-3 items-center p-2 rounded-lg cursor-pointer border border-transparent hover:bg-[#1a2333]" onclick="player_do_video_cam(this,'CAM3 — Traseira')">
+              <div class="w-20 h-12 rounded bg-black flex items-center justify-center text-[10px] text-slate-500 shrink-0">CAM3</div>
+              <div class="min-w-0"><p class="text-sm font-semibold text-slate-200 truncate">Traseira / baú</p><p class="text-xs text-slate-500">720p · 118 MB</p></div>
+            </div>
+            <div class="pv-cam flex gap-3 items-center p-2 rounded-lg cursor-pointer border border-transparent hover:bg-[#1a2333]" onclick="player_do_video_cam(this,'CAM4 — Lateral dir.')">
+              <div class="w-20 h-12 rounded bg-black flex items-center justify-center text-[10px] text-slate-500 shrink-0">CAM4</div>
+              <div class="min-w-0"><p class="text-sm font-semibold text-slate-200 truncate">Lateral direita</p><p class="text-xs text-slate-500">720p · 96 MB · descarregando 71%</p></div>
+            </div>
+          </div>
+
+          <div id="pv-aba-anexos" class="p-3 space-y-2 hidden">
+            <div class="flex gap-3 items-center p-2 rounded-lg hover:bg-[#1a2333] cursor-pointer" onclick="mostrarTela('fotos-e-documentos')">
+              <div class="w-10 h-10 rounded bg-[#1f2b3e] flex items-center justify-center shrink-0">🖼</div>
+              <div class="min-w-0"><p class="text-sm font-semibold text-slate-200 truncate">Foto do para-choque — 23:52</p><p class="text-xs text-slate-500">JPG · 2,1 MB · enviada por Anderson</p></div>
+            </div>
+            <div class="flex gap-3 items-center p-2 rounded-lg hover:bg-[#1a2333] cursor-pointer" onclick="mostrarTela('fotos-e-documentos')">
+              <div class="w-10 h-10 rounded bg-[#1f2b3e] flex items-center justify-center shrink-0">📄</div>
+              <div class="min-w-0"><p class="text-sm font-semibold text-slate-200 truncate">Boletim de ocorrência 4471/2024</p><p class="text-xs text-slate-500">PDF · 480 KB · PRF Campina Grande do Sul</p></div>
+            </div>
+            <div class="flex gap-3 items-center p-2 rounded-lg hover:bg-[#1a2333] cursor-pointer" onclick="mostrarTela('fotos-e-documentos')">
+              <div class="w-10 h-10 rounded bg-[#1f2b3e] flex items-center justify-center shrink-0">📄</div>
+              <div class="min-w-0"><p class="text-sm font-semibold text-slate-200 truncate">CT-e 92.114 — carga Joinville</p><p class="text-xs text-slate-500">PDF · 96 KB</p></div>
+            </div>
+            <button onclick="mostrarTela('fotos-e-documentos')" class="pv-btn w-full justify-center bg-[#1f2b3e] text-cyan-300 hover:bg-[#2a3a53] mt-1">Abrir gerenciador de anexos</button>
+          </div>
+
+          <div id="pv-aba-log" class="p-3 space-y-3 hidden text-xs">
+            <div class="flex gap-2"><span class="text-slate-500 font-mono shrink-0">23:47</span><span class="text-slate-300">Descarga automática concluída — MDVR Streamax X5-H, Wi-Fi pátio Curitiba</span></div>
+            <div class="flex gap-2"><span class="text-slate-500 font-mono shrink-0">23:48</span><span class="text-slate-300">Hash SHA-256 validado, arquivo marcado como íntegro</span></div>
+            <div class="flex gap-2"><span class="text-slate-500 font-mono shrink-0">23:49</span><span class="text-slate-300">Push enviado a 3 usuários do perfil Equipe</span></div>
+            <div class="flex gap-2"><span class="text-slate-500 font-mono shrink-0">08:12</span><span class="text-slate-300">Visualizado por Marcos Tavares (Cliente — Vale Norte)</span></div>
+            <button onclick="mostrarTela('painel-administrativo')" class="pv-btn w-full justify-center bg-[#1f2b3e] text-slate-300 hover:bg-[#2a3a53] mt-1">Auditoria completa</button>
+          </div>
+        </div>
+
+        <div class="pv-card p-4">
+          <p class="pv-lbl mb-2">Alertas neste trecho</p>
+          <div class="space-y-2">
+            <div class="flex items-center justify-between gap-2 bg-amber-500/10 border border-amber-500/30 rounded-lg px-3 py-2">
+              <div><p class="text-sm font-semibold text-amber-300">Frenagem brusca</p><p class="text-[11px] text-slate-400">00:52 · 62 → 18 km/h</p></div>
+              <button onclick="player_do_video_ir(52,'00:52')" class="pv-btn bg-amber-500/20 text-amber-300 text-xs">Ir</button>
+            </div>
+            <div class="flex items-center justify-between gap-2 bg-red-500/10 border border-red-500/30 rounded-lg px-3 py-2">
+              <div><p class="text-sm font-semibold text-red-300">Impacto detectado (G-Force 4,2)</p><p class="text-[11px] text-slate-400">01:34 · BR-116 km 218</p></div>
+              <button onclick="player_do_video_ir(94,'01:34')" class="pv-btn bg-red-500/20 text-red-300 text-xs">Ir</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    var pv_seg = 12, pv_dur = 154, pv_timer = null, pv_fs = false;
+    function player_do_video_fmt(s){var m=Math.floor(s/60),r=Math.floor(s%60);return (m<10?'0':'')+m+':'+(r<10?'0':'')+r;}
+    function player_do_video_render(){
+      document.getElementById('pv-tempo').textContent = player_do_video_fmt(pv_seg);
+      document.getElementById('pv-barra').style.width = (pv_seg/pv_dur*100)+'%';
+      var s = 2 + Math.floor(pv_seg%60);
+      document.getElementById('pv-osd-seg').textContent = (s<10?'0':'')+s;
+    }
+    function player_do_video_toggle(){
+      var b=document.getElementById('pv-btn-play'), ov=document.getElementById('pv-overlay-play');
+      if(pv_timer){clearInterval(pv_timer);pv_timer=null;b.textContent='▶ Play';ov.classList.remove('hidden');}
+      else{b.textContent='⏸ Pausa';ov.classList.add('hidden');
+        pv_timer=setInterval(function(){pv_seg++;if(pv_seg>=pv_dur){pv_seg=pv_dur;player_do_video_toggle();}player_do_video_render();},250);}
+    }
+    function player_do_video_pular(n){pv_seg=Math.max(0,Math.min(pv_dur,pv_seg+n));player_do_video_render();}
+    function player_do_video_seek(e){var r=e.currentTarget.getBoundingClientRect();pv_seg=Math.round((e.clientX-r.left)/r.width*pv_dur);player_do_video_render();}
+    function player_do_video_ir(s,txt){pv_seg=s;player_do_video_render();player_do_video_acao('Posicionado no alerta de '+txt);}
+    function player_do_video_vel(el,v){
+      document.querySelectorAll('#pv-vel button').forEach(function(b){b.className='px-2.5 py-1 text-xs text-slate-400 hover:bg-[#1f2b3e]';});
+      el.className='px-2.5 py-1 text-xs bg-cyan-500 text-slate-900 font-bold';
+      player_do_video_acao('Velocidade de reprodução: '+v);
+    }
+    function player_do_video_fullscreen(){
+      pv_fs=!pv_fs;
+      document.getElementById('pv-fs').textContent = pv_fs?'⤡ Sair da tela cheia':'⛶ Tela cheia';
+      player_do_video_acao(pv_fs?'Modo tela cheia ativado (1920×1080)':'Modo tela cheia encerrado');
+    }
+    function player_do_video_marcar(){player_do_video_acao('Trecho marcado a partir de '+player_do_video_fmt(pv_seg)+' — pronto para exportar');}
+    function player_do_video_compartilhar(){
+      var l=document.getElementById('pv-link'); l.classList.toggle('hidden');
+      if(!l.classList.contains('hidden')) player_do_video_acao('Link temporário gerado com PIN 4471');
+    }
+    function player_do_video_acao(msg){
+      var s=document.getElementById('pv-status');
+      s.textContent='✓ '+msg; s.classList.remove('hidden');
+      clearTimeout(s._t); s._t=setTimeout(function(){s.classList.add('hidden');},4000);
+    }
+    function player_do_video_aba(nome,el){
+      document.querySelectorAll('[data-aba]').forEach(function(t){t.classList.remove('ativo');});
+      el.classList.add('ativo');
+      ['cameras','anexos','log'].forEach(function(a){
+        document.getElementById('pv-aba-'+a).classList.toggle('hidden', a!==nome);
+      });
+    }
+    function player_do_video_cam(el,nome){
+      document.querySelectorAll('.pv-cam').forEach(function(c){c.className='pv-cam flex gap-3 items-center p-2 rounded-lg cursor-pointer border border-transparent hover:bg-[#1a2333]';});
+      el.className='pv-cam flex gap-3 items-center p-2 rounded-lg cursor-pointer bg-cyan-500/10 border border-cyan-500/40';
+      document.getElementById('pv-osd').firstChild.textContent = nome.split(' ')[0]+' · RQL-7C42 · 12/06/2024 23:41:';
+      player_do_video_acao('Trocado para '+nome+' no mesmo instante ('+player_do_video_fmt(pv_seg)+')');
+    }
+    player_do_video_render();
+  </script>
+</section>
+
     <!-- TELAS -->
     </main>
 
